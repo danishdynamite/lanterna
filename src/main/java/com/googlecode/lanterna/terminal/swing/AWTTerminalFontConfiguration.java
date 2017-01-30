@@ -71,6 +71,8 @@ public class AWTTerminalFontConfiguration {
 
     private static List<Font> getDefaultWindowsFonts() {
         return Collections.unmodifiableList(Arrays.asList(
+        		new Font("Lucida Console", Font.PLAIN, getFontSize()),
+        		new Font("Consolas", Font.PLAIN, getFontSize()),
                 new Font("Courier New", Font.PLAIN, getFontSize()), //Monospaced can look pretty bad on Windows, so let's override it
                 new Font("Monospaced", Font.PLAIN, getFontSize())));
     }
@@ -116,13 +118,13 @@ public class AWTTerminalFontConfiguration {
 
             // If the width is wider than Full HD (1080p, or 1920x1080), then assume it's high-DPI
             if (primaryMonitorWidth > 2000) {
-                CHOSEN_FONT_SIZE = 28;
+                CHOSEN_FONT_SIZE = 40;
             }
         }
 
         // If no size was picked, default to 14
         if(CHOSEN_FONT_SIZE == null) {
-            CHOSEN_FONT_SIZE = 14;
+            CHOSEN_FONT_SIZE = 20;
         }
         return CHOSEN_FONT_SIZE;
     }
