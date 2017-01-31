@@ -115,6 +115,9 @@ public class SwingTerminalFrame extends JFrame implements IOSafeTerminal {
         setBackground(Color.BLACK); //This will reduce white flicker when resizing the window
         pack();
 
+        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+        setLocation(dim.width/2 - getSize().width/2, dim.height/2 - getSize().height/2);
+
         //Put input focus on the terminal component by default
         swingTerminal.requestFocusInWindow();
     }
