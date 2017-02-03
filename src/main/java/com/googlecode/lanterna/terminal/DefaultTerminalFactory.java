@@ -111,7 +111,7 @@ public class DefaultTerminalFactory implements TerminalFactory {
                 (System.console() != null && !preferTerminalEmulator) ) {
             // if tty but have no tty, but do have a port, then go telnet:
             if( telnetPort > 0 && System.console() == null) {
-                return createTelnetTerminal();
+                return createTelnetTerminal(Charset.forName("UTF-8"));
             }
             if(isOperatingSystemWindows()) {
                 return createWindowsTerminal();
@@ -125,7 +125,7 @@ public class DefaultTerminalFactory implements TerminalFactory {
             // if user wanted mouse AND set a telnetPort, and didn't
             //   explicitly ask for a graphical Terminal, then go telnet:
             if (!preferTerminalEmulator && mouseCaptureMode != null && telnetPort > 0) {
-                return createTelnetTerminal();
+                return createTelnetTerminal(Charset.forName("UTF-8"));
             } else {
                 return createTerminalEmulator();
             }
@@ -180,12 +180,12 @@ public class DefaultTerminalFactory implements TerminalFactory {
      *
      * @return New terminal emulator exposed as a {@link Terminal} interface
      */
-    public TelnetTerminal createTelnetTerminal() {
+    public TelnetTerminal createTelnetTerminal(Charset charset) {
         try {
             System.err.print("Waiting for incoming telnet connection on port "+telnetPort+" ... ");
             System.err.flush();
 
-            TelnetTerminalServer tts = new TelnetTerminalServer(telnetPort);
+            TelnetTerminalServer tts = new TelnetTerminalServer(telnetPort, charset);
             TelnetTerminal rawTerminal = tts.acceptConnection();
             tts.close(); // Just for single-shot: free up the port!
 
@@ -397,7 +397,7 @@ public class DefaultTerminalFactory implements TerminalFactory {
         return new TerminalScreen(createTerminal());
     }
 
-    private Terminal createWindowsTerminal() throws IOException {
+    public Terminal createWindowsTerminal() throws IOException {
         try {
             Class<?> nativeImplementation = Class.forName("com.googlecode.lanterna.terminal.WindowsTerminal");
             Constructor<?> constructor = nativeImplementation.getConstructor(InputStream.class, OutputStream.class, Charset.class, UnixLikeTTYTerminal.CtrlCBehaviour.class);
@@ -408,7 +408,7 @@ public class DefaultTerminalFactory implements TerminalFactory {
         }
     }
     
-    private Terminal createCygwinTerminal(OutputStream outputStream, InputStream inputStream, Charset charset) throws IOException {
+    public Terminal createCygwinTerminal(OutputStream outputStream, InputStream inputStream, Charset charset) throws IOException {
         CygwinTerminal cygTerminal = new CygwinTerminal(inputStream, outputStream, charset);
         if(inputTimeout >= 0) {
             cygTerminal.getInputDecoder().setTimeoutUnits(inputTimeout);
@@ -416,7 +416,7 @@ public class DefaultTerminalFactory implements TerminalFactory {
         return cygTerminal;
     }
 
-    private Terminal createUnixTerminal(OutputStream outputStream, InputStream inputStream, Charset charset) throws IOException {
+    public Terminal createUnixTerminal(OutputStream outputStream, InputStream inputStream, Charset charset) throws IOException {
         UnixTerminal unixTerminal;
         try {
             Class<?> nativeImplementation = Class.forName("com.googlecode.lanterna.terminal.NativeGNULinuxTerminal");

@@ -134,10 +134,12 @@ public abstract class AbstractComponent<T extends Component> implements Componen
                 // Check if the theme has changed
                 themeRenderer != null && currentTheme != themeRenderersTheme) {
 
-            themeRenderer = currentTheme.getDefinition(getClass()).getRenderer(selfClass());
-            if(themeRenderer != null) {
-                themeRenderersTheme = currentTheme;
-            }
+        	if (currentTheme != null && currentTheme.getDefinition(getClass()) != null) {
+	            themeRenderer = currentTheme.getDefinition(getClass()).getRenderer(selfClass());
+	            if(themeRenderer != null) {
+	                themeRenderersTheme = currentTheme;
+	            }
+        	}
         }
         if(themeRenderer != null) {
             return themeRenderer;
